@@ -1,0 +1,26 @@
+{
+  "name": "React_WebRTC",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "nodemon ./server/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cyberspacedk/React_WebRTC.git"
+  },
+  "keywords": [],
+  "author": "Cyberspacedk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cyberspacedk/React_WebRTC/issues"
+  },
+  "homepage": "https://github.com/cyberspacedk/React_WebRTC#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.7",
+    "socket.io": "^4.0.1"
+  }
+}
