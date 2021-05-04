@@ -4,7 +4,7 @@ import {makeStyles} from "@material-ui/core/styles";
 import {Assignment, Phone, PhoneDisabled} from "@material-ui/icons"
 import {CopyToClipboard} from "react-copy-to-clipboard"
 
-import {SocketContext} from "../context/SocketCtx"
+import {SocketContext, ICtxProps} from "../context/SocketCtx"
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme) => ({
     },
    }));
 
-export const Options = ({children}) => {
+export const Options: React.FC= ({children}) => {
     const [idToCall, setIdToCall] = useState("");
     const {
         me,
@@ -47,7 +47,7 @@ export const Options = ({children}) => {
         callEnded, 
         leaveCall,
         callUser
-    } = useContext(SocketContext);
+    } = useContext(SocketContext) as ICtxProps;
 
     const classes = useStyles(); 
 
@@ -61,21 +61,23 @@ export const Options = ({children}) => {
                                 Account info
                             </Typography>
                             <TextField 
-                                fullwidth
+                                fullWidth
                                 label="Name" 
                                 value={clientName} 
                                 onChange={({target}) => setClientName(target.value)} 
                             />
-                            <CopyToClipboard text={me} className={classes.margin}>
-                                <Button 
-                                    fullWidth 
-                                    variant="contained" 
-                                    color="primary" 
-                                    startIcon={<Assignment fontSize="large"/>}
-                                >
-                                    Copy your ID
-                                </Button>
-                            </CopyToClipboard>
+                            <div className={classes.margin}>
+                                <CopyToClipboard text={me}>
+                                    <Button 
+                                        fullWidth 
+                                        variant="contained" 
+                                        color="primary" 
+                                        startIcon={<Assignment fontSize="large"/>}
+                                    >
+                                        Copy your ID
+                                    </Button>
+                                </CopyToClipboard>
+                            </div> 
                         </Grid>
 
                         <Grid item xs={12} md={6} className={classes.padding}>
@@ -83,7 +85,7 @@ export const Options = ({children}) => {
                                 Make a call
                             </Typography>
                             <TextField 
-                                fullwidth
+                                fullWidth
                                 label="ID to call" 
                                 value={idToCall} 
                                 onChange={({target}) => setIdToCall(target.value)} 
@@ -114,8 +116,9 @@ export const Options = ({children}) => {
                         </Grid>
                     </Grid>
                 </form>
-            </Paper>
-            {children}
+
+                {children}
+            </Paper> 
         </Container>
     )
 }

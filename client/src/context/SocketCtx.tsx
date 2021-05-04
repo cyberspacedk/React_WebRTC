@@ -4,6 +4,7 @@ import Peer from "simple-peer";
 
 export interface ICtxProps  {
     clientName: string;
+    setClientName: (name: string) => void;
     me: string;
     stream: MediaStream,
     call: ICall
@@ -16,14 +17,13 @@ export interface ICtxProps  {
     myVideoRef: IMediaRef
 }
 
-
 export const SocketContext = createContext<ICtxProps | {}>({});
 
 const socket = io("http://localhost:5000");
 
 type Media = MediaStream | undefined
 interface IMediaRef {
-    srcObject?: Media
+    srcObject: Media
 }
 interface ICall {
     isRecievedCall: boolean,
@@ -46,8 +46,8 @@ export const SocketProvider: React.FC = ({children}) => {
     const [callEnded, setCallEnded] = useState(false);
 
 
-    const myVideoRef = useRef<IMediaRef>({});
-    const userVideoRef = useRef<IMediaRef>({});
+    const myVideoRef = useRef<Partial <IMediaRef> | HTMLVideoElement>({});
+    const userVideoRef = useRef<Partial <IMediaRef>>({});
     const connectionRef = useRef<Peer.Instance>()
 
 
@@ -57,16 +57,16 @@ export const SocketProvider: React.FC = ({children}) => {
             audio: true
         })
         .then(currentStream => {
-        console.log("🚀 ~ file: SocketCtx.tsx ~ line 60 ~ useEffect ~ currentStream", currentStream)
             setStream(currentStream); 
             myVideoRef.current.srcObject = currentStream; 
         });
 
+        // listen event
         socket.on("me", id => {
             setMe(id)
         });
 
-        socket.on("callUser", data => {
+        socket.on("calluser", data => {
             const {from, name: callerName, signal} = data;
             setCall({
                 isRecievedCall: true,
@@ -102,6 +102,7 @@ export const SocketProvider: React.FC = ({children}) => {
     }
 
     const callUser = (id: string)=> {
+    console.log("calluser ~ id", id)
         const peer = new Peer({
             initiator: true, 
             trickle: false,

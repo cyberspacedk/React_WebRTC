@@ -35,8 +35,7 @@ export const VideoPlayer = () => {
         callEnded, 
         stream, 
         call
-    } = useContext(SocketContext);;
-        console.log("REF", myVideoRef)
+    } = useContext(SocketContext);
 
     return (
         <Grid container className={classes.gridContainer}>

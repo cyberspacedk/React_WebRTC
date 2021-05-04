@@ -1,8 +1,9 @@
 const app = require("express")();
+const server = require("http").createServer(app);
 const cors = require("cors");
 
 // Socket 
-const io = require("socket.io")({
+const io = require("socket.io")(server, {
     cors: {
         origin: "*",
         methods: ["GET", "POST"]
@@ -10,12 +11,15 @@ const io = require("socket.io")({
 });
 
 io.on("connection", socket => {
+    // send connection ID to client
     socket.emit("me", socket.id);
 
     socket.on("disconnect", () =>{
+        // notify ALL connections about disconnect
         socket.broadcast.emit("callended")
     });
 
+    // listen client event
     socket.on("calluser", (data) => {
         const {userToCall, signalData, from, name} = data;
         io.to(userToCall).emit("calluser", {signal: signalData, from, name})
@@ -38,6 +42,6 @@ app.get("/", (req, res) =>{
 });
 
 // Start server
-app.listen(PORT, ()=> {
+server.listen(PORT, ()=> {
     console.log(`Server starts at port ${PORT}`)
 })
