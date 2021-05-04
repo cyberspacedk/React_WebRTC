@@ -2,9 +2,9 @@ import React, {createContext, useState, useRef, useEffect} from 'react'
 import {io} from "socket.io-client";
 import Peer from "simple-peer";
 
-interface ICtxProps  {
+export interface ICtxProps  {
     clientName: string;
-    socketId: string;
+    me: string;
     stream: MediaStream,
     call: ICall
     callAccepted: boolean
@@ -12,7 +12,11 @@ interface ICtxProps  {
     callUser: (id: string) => void;
     answerCall: () => void;
     leaveCall: () => void;
+    userVideoRef: IMediaRef,
+    myVideoRef: IMediaRef
 }
+
+
 export const SocketContext = createContext<ICtxProps | {}>({});
 
 const socket = io("http://localhost:5000");
@@ -29,9 +33,9 @@ interface ICall {
 }
 
 export const SocketProvider: React.FC = ({children}) => {
+    const [stream, setStream] = useState<Media>(undefined);
+    const [me, setMe] = useState("");
     const [clientName, setClientName] = useState("");
-    const [socketId, setSocketId] = useState("");
-    const [stream, setStream] = useState<Media>(undefined)
     const [call, setCall] = useState<ICall>({
         isRecievedCall: false,
         from: "",
@@ -53,12 +57,13 @@ export const SocketProvider: React.FC = ({children}) => {
             audio: true
         })
         .then(currentStream => {
+        console.log("🚀 ~ file: SocketCtx.tsx ~ line 60 ~ useEffect ~ currentStream", currentStream)
             setStream(currentStream); 
             myVideoRef.current.srcObject = currentStream; 
         });
 
         socket.on("me", id => {
-            setSocketId(id)
+            setMe(id)
         });
 
         socket.on("callUser", data => {
@@ -107,7 +112,7 @@ export const SocketProvider: React.FC = ({children}) => {
             socket.emit("calluser", { 
                 userToCall: id,
                 signalData: data,
-                from: socketId,
+                from: me,
                 name: clientName
             })
         });
@@ -132,7 +137,8 @@ export const SocketProvider: React.FC = ({children}) => {
 
     const ctxValue = {
         clientName,
-        socketId,
+        setClientName,
+        me,
         stream,
         call,
         callAccepted,
