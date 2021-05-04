@@ -19,7 +19,7 @@ export interface ICtxProps  {
 
 export const SocketContext = createContext<ICtxProps | {}>({});
 
-const socket = io("http://localhost:5000");
+const socket = io("https://react-webrtc-videochat.herokuapp.com/");
 
 type Media = MediaStream | undefined
 interface IMediaRef {
